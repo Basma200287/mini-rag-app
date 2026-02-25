@@ -14,4 +14,7 @@ $ conda create -n mini-rag python=3.8
 ''' bash 
 $ coda activate mini-rag 
 '''
-
+### (optionnel) configure ta ligne de commande pour une meilleure fiabilité
+''' bash 
+$ export PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ " 
+'''
