@@ -1,9 +1,9 @@
-from fastapi import FastAPI , APIRouter
+from fastapi import APIRouter
 
-base_router= APIRouter()
+base_router = APIRouter()
  
-@app.get("/")
+@base_router.get("/")
 def welcome():
     return {
-        "message": "Hello All"
+        "message": "Hello bestie"
     }
