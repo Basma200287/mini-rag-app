@@ -1,5 +1,5 @@
 from fastapi import UploadFile
-from BaseControler import BaseControler
+from .BaseControler import BaseControler
 
 
 class DataControler(BaseControler):
