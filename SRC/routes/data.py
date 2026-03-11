@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, UploadFile
-from os
+import os
 from helpers.config import get_settings, Settings
 from controlers import DataControler
 
@@ -8,7 +8,7 @@ data_router = APIRouter(
     tags=["api_v1","data"],
 )
 
-@data_router.post("/upload/(project_id)")
+@data_router.post("/upload/{project_id}")
 async def upload_data(project_id:str,file:UploadFile, 
                       app_settings:Settings = Depends(get_settings)):
 
