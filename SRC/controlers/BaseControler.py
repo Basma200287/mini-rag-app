@@ -1,6 +1,7 @@
 from helpers.config import get_settings, Settings
 import os
-
+import random
+import string
 
 class BaseControler:
     def __init__(self):
@@ -11,5 +12,6 @@ class BaseControler:
             self.base_dir,
             "assets/files"
         )
-        
+    def generate_random_string(self, length: int=12):
+        return ''.join(random.choices(string.ascii_lowecase + string.digits, k=length))   
     
