@@ -22,7 +22,7 @@ class DataControler(BaseControler):
         
         return True, ResponseSignal.FILE_VALIDATED_SUCCESS.value
 
-    def generate_unique_filename(self, orig_file_name:str, project_id:str ):
+    def generate_unique_filepath(self, orig_file_name:str, project_id:str ):
 
         random_key = self.generate_random_string()
         project_path = ProjectControler().get_project_path(project_id=project_id)
@@ -43,7 +43,7 @@ class DataControler(BaseControler):
                         random_key + "_" + cleaned_file_name
                     )
         
-        return new_file_path
+        return new_file_path, random_key + "_" + cleaned_file_name
 
 
     def get_clean_file_name(self, orig_file_name: str):
@@ -52,7 +52,7 @@ class DataControler(BaseControler):
         cleaned_file_name = re.sub(r'[^\w.]', '', orig_file_name.strip())
 
         # replace spaces with underscore
-        cleaned_file_name = cleaned_file_name.replace("","_" )
+        cleaned_file_name = cleaned_file_name.replace(" ","_" )
 
         return cleaned_file_name
         

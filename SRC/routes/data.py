@@ -37,7 +37,7 @@ async def upload_data(project_id:str,file:UploadFile,
 
                      #create project folder
                      project_dir_path = ProjectControler().get_project_path(project_id=project_id)
-                     file_path = data_controler.generate_unique_filename(
+                     file_path, file_id = data_controler.generate_unique_filepath(
                         orig_file_name = file.filename,
                         project_id = project_id
                      )
@@ -49,7 +49,7 @@ async def upload_data(project_id:str,file:UploadFile,
                             while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
                                 await f.write(chunk) 
                      except Exception as e:
-                        
+
                         logger.error(f"Error while uploading file: {e}")                     
 
                         return JSONResponse(
@@ -61,7 +61,8 @@ async def upload_data(project_id:str,file:UploadFile,
                
                      return JSONResponse(
                             content = {
-                                "signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value
+                                "signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value,
+                                "file_id": file_id
                                 }
                         )
                                 
