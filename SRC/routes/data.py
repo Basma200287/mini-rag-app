@@ -6,6 +6,10 @@ from controlers.DataControler import DataControler
 from controlers.ProjectControler import ProjectControler
 import aiofiles
 from Models import ResponseSignal
+import logging
+
+logger = logging.getLogger('uvicorn.error')
+
 
 
 data_router = APIRouter(
@@ -34,16 +38,26 @@ async def upload_data(project_id:str,file:UploadFile,
                      #create project folder
                      project_dir_path = ProjectControler().get_project_path(project_id=project_id)
                      file_path = data_controler.generate_unique_filename(
-                        orig_file_name = file.orig_file_name,
+                        orig_file_name = file.filename,
                         project_id = project_id
                      )
 
 
                      # save file chunks
-                     async with aiofiles.open(file_path, "wb") as f :
-                        while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
-                            await f.write(chunk) 
+                     try:
+                        async with aiofiles.open(file_path, "wb") as f :
+                            while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
+                                await f.write(chunk) 
+                     except Exception as e:
+                        
+                        logger.error(f"Error while uploading file: {e}")                     
 
+                        return JSONResponse(
+                            status_code = status.HTTP_400_BAD_REQUEST,
+                            content = {
+                                "signal" : ResponseSignal.FILE_UPLOADED_FAILED.value
+                            }
+                        )
                
                      return JSONResponse(
                             content = {
