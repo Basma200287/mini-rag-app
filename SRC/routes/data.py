@@ -4,6 +4,7 @@ import os
 from helpers.config import get_settings, Settings
 from controlers.DataControler import DataControler
 from controlers.ProjectControler import ProjectControler
+from controlers.ProcessControler import ProcessControler
 import aiofiles
 from Models import ResponseSignal
 import logging
@@ -72,8 +73,25 @@ async def upload_data(project_id:str,file:UploadFile,
 async def process_endpoint(project_id: str, process_request: ProcessRequest ):
 
     file_id = process_request.file_id
+    chunk_size = process_request.chunk_size
+    overlap_size = process_controler.overlap_size
 
+    process_controler = ProcessControler(project_id=project_id)
+
+    file_content = process_controler.get_file_content(file_id=file_id)
+    
+    file_chunks = process_controler.process_file_content(
+        file_content=file_content,
+        file_id=file_id,
+        chunk_size=chunk_size
+        overlap_size=overlap_size
+    )
+
+    if file_chunks is None or len(file_chunks)
+ 
     return file_id
+
+
 
                                 
 
