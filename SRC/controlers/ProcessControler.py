@@ -3,7 +3,7 @@ from .ProjectControler import ProjectControler
 import os
 from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import PyMuPDFLoader
-from langchain_test_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from Models import ProcessingEnum
 
 class ProcessControler(BaseControler):
@@ -12,12 +12,12 @@ class ProcessControler(BaseControler):
         super().__init__()
 
         self.project_id = project_id
-        self.project_path = ProcessControler().get_project_path(project_id)
+        self.project_path = ProcessControler().get_project_path(project_id=project_id)
 
     def get_file_extension(self, file_id: str):
         return os.path.splitext(file_id)[-1]
     
-    def get_file_loader(self, file_id: str,file_path: str):
+    def get_file_loader(self, file_id: str):
 
         file_ext = self.get_file_extension(file_id=file_id)
         file_path = os.path.join(
@@ -34,7 +34,7 @@ class ProcessControler(BaseControler):
 
         return None 
     
-    def fet_file_content(self. file_id:str):
+    def get_file_content(self, file_id:str):
 
         loader = self.get_file_loader(file_id=file_id)
         return loader.load()
@@ -47,7 +47,7 @@ class ProcessControler(BaseControler):
             length_function= len, 
         )
 
-        file_content_text = [
+        file_content_texts = [
             rec.page_content
             for rec in file_content
         ]
@@ -58,7 +58,7 @@ class ProcessControler(BaseControler):
         ]   
 
         chunks = text_splitter.create_documents(
-            file_content_text,
+            file_content_texts,
             metadatas = file_content_metadata
         )
 
