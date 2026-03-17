@@ -12,7 +12,14 @@ class ProcessControler(BaseControler):
         super().__init__()
 
         self.project_id = project_id
-        self.project_path = ProcessControler().get_project_path(project_id=project_id)
+        self.project_path = self.get_project_path(project_id)
+
+    def get_project_path(self, project_id:str):
+        project_dir = os.path.join(
+            self.file_dir,
+            project_id
+        )
+        return project_dir
 
     def get_file_extension(self, file_id: str):
         return os.path.splitext(file_id)[-1]
@@ -62,7 +69,7 @@ class ProcessControler(BaseControler):
             metadatas = file_content_metadata
         )
 
-        return chunks 
+        return chunks    
         
 
 
