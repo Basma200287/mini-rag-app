@@ -1,0 +1,19 @@
+services:
+  mongodb:
+    image: mongo:8.2.6-noble
+
+    container_name: mongodb
+
+    ports:
+       - "27007:27017"
+
+    volumes:
+       - ./mongodb:data/db
+       
+    network:
+       - backend
+
+    restart: always
+
+networks:
+  backend:      
