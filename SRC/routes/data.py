@@ -9,11 +9,9 @@ import aiofiles
 from Models import ResponseSignal
 import logging
 from .schemes.data import ProcessRequest
-
+from models.ProjectModel import ProjectModel
 
 logger = logging.getLogger('uvicorn.error')
-
-
 
 data_router = APIRouter(
     prefix="/api/v1/data",
@@ -21,8 +19,16 @@ data_router = APIRouter(
 )
 
 @data_router.post("/upload/{project_id}")
-async def upload_data(project_id:str,file:UploadFile, 
+async def upload_data(request: Request, project_id:str,file:UploadFile, 
                       app_settings:Settings = Depends(get_settings)):
+                     
+                     project_model= ProjectModel(
+                        db_client= request.app.db_client
+                     )
+                     project = project_model.get_project_or_create_one(
+                        project_id=project_id
+                     )
+
 
                      #validate the file proprieties
                      data_controler = DataControler()
@@ -66,6 +72,7 @@ async def upload_data(project_id:str,file:UploadFile,
                             content = {
                                 "signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value,
                                 "file_id": file_id
+                                "project_id":project._id
                                 }
                         )
 
