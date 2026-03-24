@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, status
+from fastapi import APIRouter, Depends, UploadFile, status,  Request
 from fastapi.responses import JSONResponse
 import os
 from helpers.config import get_settings, Settings
@@ -9,7 +9,7 @@ import aiofiles
 from Models import ResponseSignal
 import logging
 from .schemes.data import ProcessRequest
-from models.ProjectModel import ProjectModel
+from Models.ProjectModel import ProjectModel
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -21,22 +21,21 @@ data_router = APIRouter(
 @data_router.post("/upload/{project_id}")
 async def upload_data(request: Request, project_id:str,file:UploadFile, 
                       app_settings:Settings = Depends(get_settings)):
-                     
-                     project_model= ProjectModel(
+                      project_model= ProjectModel(
                         db_client= request.app.db_client
-                     )
-                     project = project_model.get_project_or_create_one(
+                      )
+                      project = await project_model.get_project_or_create_one(
                         project_id=project_id
-                     )
+                      )
 
 
-                     #validate the file proprieties
-                     data_controler = DataControler()
+                      #validate the file proprieties
+                      data_controler = DataControler()
 
 
-                     is_valid, result_signal = data_controler.validate_uploaded_file(file=file)
+                      is_valid, result_signal = data_controler.validate_uploaded_file(file=file)
                      
-                     if not is_valid:
+                      if not is_valid:
                         return JSONResponse(
                             status_code = status.HTTP_400_BAD_REQUEST,
                             content = {
@@ -44,20 +43,20 @@ async def upload_data(request: Request, project_id:str,file:UploadFile,
                             }
                         )
 
-                     #create project folder
-                     project_dir_path = ProjectControler().get_project_path(project_id=project_id)
-                     file_path, file_id = data_controler.generate_unique_filepath(
+                      #create project folder
+                      project_dir_path = ProjectControler().get_project_path(project_id=project_id)
+                      file_path, file_id = data_controler.generate_unique_filepath(
                         orig_file_name = file.filename,
                         project_id = project_id
-                     )
+                      )
 
 
-                     # save file chunks
-                     try:
+                      # save file chunks
+                      try:
                         async with aiofiles.open(file_path, "wb") as f :
                             while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
                                 await f.write(chunk) 
-                     except Exception as e:
+                      except Exception as e:
 
                         logger.error(f"Error while uploading file: {e}")                     
 
@@ -68,13 +67,13 @@ async def upload_data(request: Request, project_id:str,file:UploadFile,
                             }
                         )
                
-                     return JSONResponse(
+                      return JSONResponse(
                             content = {
                                 "signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value,
-                                "file_id": file_id
-                                "project_id":project._id
+                                "file_id": file_id,
+                                "project_id":str(project._id)
                                 }
-                        )
+                      )
 
 
 @data_router.post("/process/{project_id}")
