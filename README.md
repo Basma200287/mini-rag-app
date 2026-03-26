@@ -32,3 +32,10 @@ Définissez vos variables d’environnement dans le fichier '.env', comme la val
 ``` bash
 $ uvicorn main:app --reload --host 0.0.0.0 --port 5000 
 ```
+## Run Docker Compose Services
+
+```bash
+$ cd docker 
+$ cp .env.exemple .env
+```
+update `.env` with your credentials
