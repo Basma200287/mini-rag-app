@@ -27,8 +27,6 @@ class ProjectModel(BaseDataModel):
             project = await self.create_project(project=project)
 
             return project
-        
-        record["_id"] = str(record["_id"])
 
         return Project(**record)
 

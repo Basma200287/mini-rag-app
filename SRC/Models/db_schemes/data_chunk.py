@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, field_validator
 from typing import Optional
 from bson.objectid import ObjectId
 
@@ -8,8 +8,13 @@ class DataChunk(BaseModel):
     chunk_metadata: dict 
     chunk_order: int = Field(..., gt=0)
     chunk_project_id: ObjectId
+    
+    @field_validator("chunk_project_id", mode="before")
+    def convert_objectid(cls, v):
+        if isinstance(v, ObjectId):
+            return v
+        return ObjectId(v)  
 
     model_config = {
         "arbitrary_types_allowed": True
     }
-    

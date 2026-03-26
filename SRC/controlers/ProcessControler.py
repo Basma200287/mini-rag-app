@@ -39,6 +39,8 @@ class ProcessControler(BaseControler):
         if file_ext == ProcessingEnum.PDF.value:
             return PyMuPDFLoader(file_path)
 
+        print("TOTAL PAGES:", len(pages))
+
         return None 
     
     def get_file_content(self, file_id:str):

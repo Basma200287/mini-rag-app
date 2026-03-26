@@ -91,6 +91,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
 
     chunk_size = process_request.chunk_size
     overlap_size = process_request.overlap_size
+    do_reset = process_request.do_reset
 
     project_model= ProjectModel(
         db_client= request.app.db_client
@@ -98,6 +99,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
     project = await project_model.get_project_or_create_one(
         project_id=project_id
         )
+
         
     file_chunks = process_controler.process_file_content(
         file_content=file_content,
@@ -119,18 +121,28 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
             chunk_text=chunk.page_content,
             chunk_metadata=chunk.metadata,
             chunk_order=i+1,
-            chunk_project_id=ObjectId(project.id)
+            chunk_project_id = project.id if hasattr(project, "_id") else ObjectId(project.id)
         )
         for i, chunk in enumerate(file_chunks)
     ]
-
+    
     chunk_model = ChunkModel(
         db_client= request.app.db_client
     )
 
+    if do_reset == 1:
+        _ = await chunk_model.delete_chunks_by_project_id(
+            project_id=project.id
+        )
+
     no_records = await chunk_model.insert_many_chunks(chunks=file_chunks_records)
 
-    return no_records 
+    return JSONResponse(
+        content={
+            "signal": ResponseSignal.PROCESSING_SUCCESS.value,
+            "inserted_chunks":no_records
+        }    
+    ) 
     
 
                                 
