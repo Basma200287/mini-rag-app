@@ -98,9 +98,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
     project = await project_model.get_project_or_create_one(
         project_id=project_id
         )
-    
-    project_obj_id = ObjectId(project.id) if isinstance(project.id, str) else project.id
-    
+        
     file_chunks = process_controler.process_file_content(
         file_content=file_content,
         file_id=file_id,
@@ -121,7 +119,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
             chunk_text=chunk.page_content,
             chunk_metadata=chunk.metadata,
             chunk_order=i+1,
-            chunk_project_id=project_obj_id
+            chunk_project_id=ObjectId(project.id)
         )
         for i, chunk in enumerate(file_chunks)
     ]
