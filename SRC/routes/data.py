@@ -93,13 +93,13 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
     overlap_size = process_request.overlap_size
     do_reset = process_request.do_reset
 
+
     project_model= await ProjectModel.create_instance(
         db_client= request.app.db_client
         )
     project = await project_model.get_project_or_create_one(
         project_id=project_id
         )
-
         
     file_chunks = process_controler.process_file_content(
         file_content=file_content,
@@ -115,13 +115,15 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
             "signal" : ResponseSignal.PROSSECING_FAILED.value
             }
         )
+
+    print(project.id)
     
     file_chunks_records = [
         DataChunk(
             chunk_text=chunk.page_content,
             chunk_metadata=chunk.metadata,
             chunk_order=i+1,
-            chunk_project_id = project.id if hasattr(project, "_id") else ObjectId(project.id)
+            chunk_project_id = project.id
         )
         for i, chunk in enumerate(file_chunks)
     ]
@@ -132,7 +134,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
 
     if do_reset == 1:
         _ = await chunk_model.delete_chunks_by_project_id(
-            project_id=project.id
+            project_id=ObjectId(project.id)
         )
 
     no_records = await chunk_model.insert_many_chunks(chunks=file_chunks_records)
