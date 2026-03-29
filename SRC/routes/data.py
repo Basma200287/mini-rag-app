@@ -10,9 +10,12 @@ from Models import ResponseSignal
 import logging
 from .schemes.data import ProcessRequest
 from Models.ProjectModel import ProjectModel
-from Models.db_schemes import DataChunk
+from Models.db_schemes import DataChunk, Asset
 from Models.ChunkModel import ChunkModel
+from Models.AssetModel import AssetModel 
 from bson import ObjectId
+from Models.enums.AssetTypeEnum import AssetTypeEnum
+
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -71,11 +74,24 @@ async def upload_data(request: Request, project_id:str,file:UploadFile,
                                 "signal" : ResponseSignal.FILE_UPLOADED_FAILED.value
                             }
                         )
+
+                      #store the assets into the database
+                      asset_model = await AssetModel.create_instance(
+                        db_client= request.app.db_client
+                        )
+
+                      asset_ressource = Asset(
+                        asset_project_id=project.id,
+                        asset_type=AssetTypeEnum.FILE.value,
+                        asset_name =file_id,
+                        asset_size=os.path.getsize(file_path)
+                      )
+                      asset_record = await asset_model.create_asset(asset=asset_ressource)
                
                       return JSONResponse(
                             content = {
                                 "signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value,
-                                "file_id": file_id
+                                "file_id": str(asset_record.id),
                                 }
                       )
 
@@ -112,11 +128,9 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
         return JSONResponse(
             status_code = status.HTTP_400_BAD_REQUEST,
             content = {
-            "signal" : ResponseSignal.PROSSECING_FAILED.value
+            "signal" : ResponseSignal.PROCESSING_FAILED.value
             }
         )
-
-    print(project.id)
     
     file_chunks_records = [
         DataChunk(
