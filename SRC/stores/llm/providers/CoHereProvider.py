@@ -1,7 +1,8 @@
-from ..LLMInterface import LLMInterface
-from ..LLMEnums import CoHereEnums DocumentTypeEnum
-import cohere 
+from stores.llm.providers.LLMInterface import LLMInterface
+from stores.llm.LLMEnums import DocumentTypeEnum 
+from stores.llm.LLMEnums import CoHereEnums
 import logging 
+import cohere
 
 
 class CoHereProvider(LLMInterface):
@@ -55,7 +56,7 @@ class CoHereProvider(LLMInterface):
             chat_history= chat_history,
             message = self.process_text(prompt),
             temperature = temperature,
-            max_tokens= max_input_tokens
+            max_tokens = max_output_tokens
         )
 
         if not response or not response.text:
