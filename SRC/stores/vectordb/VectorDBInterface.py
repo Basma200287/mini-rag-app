@@ -19,7 +19,7 @@ class VectorDBInterface(ABC):
         pass
 
     @abstractmethod
-    def get_collections_info(self)-> dict:
+    def get_collections_info(self,collection_name: str)-> dict:
         pass
 
     @abstractmethod

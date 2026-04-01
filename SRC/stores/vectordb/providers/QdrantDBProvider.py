@@ -34,6 +34,9 @@ class QdrantDBProvider(VectorDBInterface):
     def get_collections_info(self, collection_name: str)-> dict:
         return self.client.get_collection(collection_name=collection_name)
     
+    def get_collection_info(self, collection_name: str) -> dict:
+        return self.client.get_collection(collection_name=collection_name)
+    
     def delete_collection(self, collection_name: str):
         if self.is_collection_existed(collection_name):
             return self.client.delete_collection(collection_name=collection_name)
@@ -126,7 +129,7 @@ class QdrantDBProvider(VectorDBInterface):
 
         return True
     
-    def search_by_vector(self, collection_name: str, vector: list, limit: int):
+    def search_by_vector(self, collection_name: str, vector: list, limit: int=5):
         
         return self.client.search(
             collection_name=collection_name,
