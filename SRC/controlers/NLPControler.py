@@ -39,7 +39,7 @@ class NLPControler(BaseControler):
         metadata = [c.chunk_metadata for c in chunks]
 
         vectors = [
-             self.embedding_client.embed_text(text=text, 
+            self.embedding_client.embed_text(text=text, 
                                               document_type=DocumentTypeEnum.DOCUMENT.value)
             for text in texts
         ]
