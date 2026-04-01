@@ -15,11 +15,15 @@ class VectorDBInterface(ABC):
         pass
 
     @abstractmethod
+    def list_all_collections(self) -> List:
+        pass
+
+    @abstractmethod
     def get_collections_info(self)-> dict:
         pass
 
     @abstractmethod
-    def delete_collections(self, collection_name: str)-> List:
+    def delete_collection(self, collection_name: str)-> List:
         pass
     
     @abstractmethod
