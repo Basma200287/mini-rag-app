@@ -1,4 +1,4 @@
-from fastapi import Fastapi, APIRouter, status,  Request
+from fastapi import FastAPI, APIRouter, status, Request
 from fastapi.responses import JSONResponse
 from routes.schemes.nlp import PushRequest
 from Models.ProjectModel import ProjectModel
@@ -25,7 +25,7 @@ async def index_project(request:Request, project_id: str, push_request: PushRequ
         db_client = request.app.db_client
     )
 
-    project = project_model.get_project_or_create_one(
+    project = await project_model.get_project_or_create_one(
         project_id=project_id
     )
 
@@ -38,7 +38,7 @@ async def index_project(request:Request, project_id: str, push_request: PushRequ
             )
     
     nlp_controler = NLPControler(
-        vectordb_client = request.app.vector_client,
+        vectordb_client = request.app.vectordb_client,
         generation_client = request.app.generation_client,
         embedding_client = request.app.embedding_client,
     )
@@ -46,9 +46,10 @@ async def index_project(request:Request, project_id: str, push_request: PushRequ
     has_records = True
     page_no = 1
     inserted_items_count = 0
+    idx = 0
 
     while has_records:
-        page_chunks = chunk_model.get_project_chunks(project=project.id, page_no = page_no)
+        page_chunks = await chunk_model.get_project_chunks(project_id=project.id, pages_no = page_no)
         if len(page_chunks):
             page_no += 1
         
@@ -56,10 +57,14 @@ async def index_project(request:Request, project_id: str, push_request: PushRequ
             has_records = False
             break
 
-        is_inserted =nlp_controler.index_into_vector_db(
+        chunks_ids = list(range(idx, idx + len(page_chunks)))
+        idx +=len(page_chunks)
+
+        is_inserted = nlp_controler.index_into_vector_db(
         project=project,
         chunks=page_chunks,
         do_reset=push_request.do_reset,
+        chunks_ids = chunks_ids
         )
 
         if not is_inserted:

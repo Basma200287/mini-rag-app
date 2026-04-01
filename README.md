@@ -36,6 +36,6 @@ $ uvicorn main:app --reload --host 0.0.0.0 --port 5000
 
 ```bash
 $ cd docker 
-$ cp .env.exemple .env
+$ docker compose up -d
 ```
 update `.env` with your credentials

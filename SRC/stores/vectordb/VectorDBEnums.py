@@ -3,6 +3,6 @@ from enum import Enum
 class VectorDBEnums(Enum):
     QDRANT ="QDRANT"
 
-class DistanceMethodeEnums(Enum):
+class DistanceMethodEnums(Enum):
     COSINE = "cosine"
     DOT = "dot"

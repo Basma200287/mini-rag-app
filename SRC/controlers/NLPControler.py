@@ -28,14 +28,15 @@ class NLPControler(BaseControler):
         return collection_info
     
     def index_into_vector_db(self, project: Project, chunks: List[DataChunk],
-                        do_reset:bool = False):
+                            chunks_ids:List[int],
+                            do_reset:bool = False):
          
         # step 1 : get collection name 
         collection_name = self.create_collection_name(project_id=project.project_id)
 
         #srep 2 : manage items
-        texts = [c.chunks_text for c in chunks ]
-        metadata = [c.chunks_metadata for c in chunks]
+        texts = [c.chunk_text for c in chunks ]
+        metadata = [c.chunk_metadata for c in chunks]
 
         vectors = [
              self.embedding_client.embed_text(text=text, 
