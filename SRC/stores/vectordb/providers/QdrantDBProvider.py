@@ -130,11 +130,18 @@ class QdrantDBProvider(VectorDBInterface):
         return True
     
     def search_by_vector(self, collection_name: str, vector: list, limit: int=5):
+        try:
+            results = self.client.points_api.search(
+                collection_name=collection_name,
+                search_request=models.SearchPoints(
+                    vector=vector,
+                    limit=limit
+                )
+            )
+            return results
+        except Exception as e:
+            self.logger.error(f"Erreur recherche vectordb: {e}")
+            return None 
         
-        return self.client.search(
-            collection_name=collection_name,
-            query_vector=vector,
-            limit=limit
-        )
         
 
