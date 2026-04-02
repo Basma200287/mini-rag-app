@@ -104,7 +104,7 @@ async def get_project_index_info(request: Request, project_id: str):
     collection_info = nlp_controler.get_vector_db_collection_info(project=project)
 
     return JSONResponse(
-            status_code = status.HTTP_200_BAD_REQUEST,
+            status_code = status.HTTP_200_OK,
             content = {
                 "signal" :ResponseSignal.VECTORDB_COLLECTION_RETRIEVED.value,
                 "collection_info": collection_info

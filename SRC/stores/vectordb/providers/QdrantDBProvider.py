@@ -8,9 +8,11 @@ class QdrantDBProvider(VectorDBInterface):
     
     def __init__(self, db_path: str, distance_method: str):
 
-        self.client=None
+        self.client= None
         self.db_path = db_path
-        self.distance_method = distance_method
+        self.distance_method = None
+
+        print(type(self.client))
 
         if distance_method== DistanceMethodEnums.COSINE.value:
             self.distance_method = models.Distance.COSINE
@@ -129,19 +131,14 @@ class QdrantDBProvider(VectorDBInterface):
 
         return True
     
-    def search_by_vector(self, collection_name: str, vector: list, limit: int=5):
-        try:
-            results = self.client.points_api.search(
-                collection_name=collection_name,
-                search_request=models.SearchPoints(
-                    vector=vector,
-                    limit=limit
-                )
-            )
-            return results
-        except Exception as e:
-            self.logger.error(f"Erreur recherche vectordb: {e}")
-            return None 
+    def search_by_vector(self, collection_name: str, vector: list, limit: int=5, filter_conditions=None):
+        results= self.search(
+            collection_name=collection_name,
+            query_vector=vector,
+            limit=limit,
+        )
+        return results
+        
         
         
 
