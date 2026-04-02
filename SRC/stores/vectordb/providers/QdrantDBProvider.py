@@ -131,11 +131,11 @@ class QdrantDBProvider(VectorDBInterface):
 
         return True
 
-    def search_by_vector(self, collection_name: str, vector: list, limit: int=5, filter_conditions=None):
+    def search_by_vector(self, collection_name: str, vector: list, limit: int=5):
         results= self.client.search(
             collection_name=collection_name,
-            query_vector=[0.2, 0.1, 0.9, 0.7],
-            limit=5,
+            query_vector=vector,
+            limit=limit,
         )
         return results
         
