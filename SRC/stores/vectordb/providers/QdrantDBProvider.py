@@ -8,7 +8,7 @@ class QdrantDBProvider(VectorDBInterface):
     
     def __init__(self, db_path: str, distance_method: str):
 
-        self.client= None
+        self.client = QdrantClient("http://localhost:6333")
         self.db_path = db_path
         self.distance_method = None
 
@@ -130,15 +130,12 @@ class QdrantDBProvider(VectorDBInterface):
                 return False
 
         return True
-    
-    client = QdrantClient("http://localhost:27007")
 
-    
     def search_by_vector(self, collection_name: str, vector: list, limit: int=5, filter_conditions=None):
         results= self.client.search(
             collection_name=collection_name,
             query_vector=[0.2, 0.1, 0.9, 0.7],
-            limit=limit,
+            limit=5,
         )
         return results
         
