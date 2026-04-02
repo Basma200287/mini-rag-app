@@ -8,7 +8,7 @@ class QdrantDBProvider(VectorDBInterface):
     
     def __init__(self, db_path: str, distance_method: str):
 
-        self.client = QdrantClient("http://localhost:6333")
+        self.client = None
         self.db_path = db_path
         self.distance_method = None
 
@@ -33,7 +33,7 @@ class QdrantDBProvider(VectorDBInterface):
     def list_all_collections(self) -> List:
         return self.client.get_collections()
     
-    def get_collections_info(self, collection_name: str)-> dict:
+    def get_collection_info(self, collection_name: str)-> dict:
         return self.client.get_collection(collection_name=collection_name)
     
     def get_collection_info(self, collection_name: str) -> dict:
@@ -50,7 +50,7 @@ class QdrantDBProvider(VectorDBInterface):
             _ = self.delete_collection(collection_name=collection_name)
 
         if not self.is_collection_existed(collection_name):
-            self.client.create_collection(
+            _ =self.client.create_collection(
                 collection_name=collection_name,
                 vectors_config=models.VectorParams(
                     size=embedding_size,
@@ -62,11 +62,11 @@ class QdrantDBProvider(VectorDBInterface):
         return False
     
     def insert_one(self, collection_name: str, text: str, vector: list,
-                   metadata: str = None,
+                   metadata: dict = None,
                    record_id: str = None):
 
         if not self.is_collection_existed(collection_name): 
-            self.logger.error(f"Can not insert new record to non_existed collection {collection_name}")
+            self.logger.error(f"Can not insert new record to non_existed collection: {collection_name}")
             return False
         
 
@@ -75,7 +75,7 @@ class QdrantDBProvider(VectorDBInterface):
                 collection_name=collection_name,
                 records=[
                     models.Record(
-                        id=[record_id],
+                        #id=[record_id],
                         vector=vector ,
                         payload={
                             "text": text, "metadata": metadata
@@ -90,14 +90,14 @@ class QdrantDBProvider(VectorDBInterface):
         return True
     
     def insert_many(self, collection_name: str, texts: list, vectors: list,
-                   metadata: str = None,
-                   record_ids: str = None, batch_size: int = 50):
+                   metadata: list = None,
+                   record_ids: list = None, batch_size: int = 50):
         
         if metadata is None:
             metadata = [None] * len(texts)
 
         if record_ids is None:
-            record_ids = list(range(0, len(texts)))
+            record_ids = [None] * len(texts) #list(range(0, len(texts)))
 
         for i in range(0, len(texts), batch_size):
             batch_end = i + batch_size
@@ -132,12 +132,12 @@ class QdrantDBProvider(VectorDBInterface):
         return True
 
     def search_by_vector(self, collection_name: str, vector: list, limit: int=5):
-        results= self.client.search(
+        return self.client.search(
             collection_name=collection_name,
             query_vector=vector,
             limit=limit,
         )
-        return results
+        
         
         
         
