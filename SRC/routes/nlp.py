@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Request
+from fastapi import FastAPI, APIRouter, status, Request
 from fastapi.responses import JSONResponse
 from routes.schemes.nlp import PushRequest, SearchRequest
 from Models.ProjectModel import ProjectModel
@@ -49,7 +49,7 @@ async def index_project(request:Request, project_id: str, push_request: PushRequ
     idx = 0
 
     while has_records:
-        page_chunks = await chunk_model.get_project_chunks(project_id=project.id, pages_no = page_no)
+        page_chunks = await chunk_model.get_project_chunks(project_id=project.id, page_no = page_no)
         if len(page_chunks):
             page_no += 1
         
@@ -104,11 +104,10 @@ async def get_project_index_info(request: Request, project_id: str):
     collection_info = nlp_controler.get_vector_db_collection_info(project=project)
 
     return JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content = {
-                "signal" :ResponseSignal.VECTORDB_COLLECTION_RETRIEVED.value,
-                "collection_info": collection_info
-                }
+                    content = {
+                        "signal" :ResponseSignal.VECTORDB_COLLECTION_RETRIEVED.value,
+                        "collection_info": collection_info
+                    }
     )
 
 @nlp_router.post("/index/search/{project_id}")

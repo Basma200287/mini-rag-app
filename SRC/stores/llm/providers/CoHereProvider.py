@@ -85,6 +85,8 @@ class CoHereProvider(LLMInterface):
             embedding_types=['float'],
         )
 
+        print("DEBUG embedding size:", len(response.embeddings.float[0]))
+
         if not response or not response.embeddings or not response.embeddings.float:
             self.logger.error("Error while embedding text with CoHere")
             return None

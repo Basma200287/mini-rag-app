@@ -86,6 +86,7 @@ class OpenAIProvider(LLMInterface):
             model = self.embedding_model_id,
             input = text,
         )
+        print("DEBUG embedding size:", len(response.data[0].embedding))
 
         if not response or not response.data or len(response.data)==0 or not response.data[0].embedding:
             self.logger.error('Error while embedding text with OpenAI')
