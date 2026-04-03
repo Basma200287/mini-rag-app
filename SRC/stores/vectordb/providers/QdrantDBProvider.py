@@ -64,6 +64,11 @@ class QdrantDBProvider(VectorDBInterface):
     def insert_one(self, collection_name: str, text: str, vector: list,
                    metadata: dict = None,
                    record_id: str = None):
+        
+        client = QdrantClient(path="path/to/your/qdrant_db")
+        collection_info = client.get_collection("ma_collection")  # remplace le nom de ta collection
+        print(collection_info)
+        print("DEBUG collection info:", collection_info)
 
         if not self.is_collection_existed(collection_name): 
             self.logger.error(f"Can not insert new record to non_existed collection: {collection_name}")
@@ -73,9 +78,9 @@ class QdrantDBProvider(VectorDBInterface):
         try:
             _ = self.client.upsert(
                 collection_name=collection_name,
-                records=[
+                points=[
                     models.PointStruct(
-                        id=[record_id],
+                        id=record_id,
                         vector=vector ,
                         payload={
                             "text": text, "metadata": metadata
@@ -107,7 +112,7 @@ class QdrantDBProvider(VectorDBInterface):
             batch_metadata = metadata[i:batch_end]
             batch_records_ids = record_ids[i:batch_end]
 
-            batch_records = [
+            points = [
                 models.PointStruct(
                     id=batch_records_ids[x],
                     vector=batch_vectors[x] ,
@@ -123,7 +128,7 @@ class QdrantDBProvider(VectorDBInterface):
             try:
                 _ = self.client.upsert(
                 collection_name=collection_name,
-                records=batch_records,
+                points=points,
                 )
             except Exception as e:
                 self.logger.error(f"Error while insering batch: {e}")
