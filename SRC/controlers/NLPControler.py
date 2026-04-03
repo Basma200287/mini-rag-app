@@ -86,6 +86,4 @@ class NLPControler(BaseControler):
         if not results:
             return False
 
-        return json.loads(
-            json.dumps(results, default=lambda x: x.__dict__)
-        )
+        return results
