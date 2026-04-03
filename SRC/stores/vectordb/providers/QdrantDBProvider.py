@@ -12,8 +12,6 @@ class QdrantDBProvider(VectorDBInterface):
         self.db_path = db_path
         self.distance_method = None
 
-        print(type(self.client))
-
         if distance_method== DistanceMethodEnums.COSINE.value:
             self.distance_method = models.Distance.COSINE
         elif distance_method == DistanceMethodEnums.DOT.value:
@@ -64,11 +62,6 @@ class QdrantDBProvider(VectorDBInterface):
     def insert_one(self, collection_name: str, text: str, vector: list,
                    metadata: dict = None,
                    record_id: str = None):
-        
-        client = QdrantClient(path="path/to/your/qdrant_db")
-        collection_info = client.get_collection("ma_collection")  # remplace le nom de ta collection
-        print(collection_info)
-        print("DEBUG collection info:", collection_info)
 
         if not self.is_collection_existed(collection_name): 
             self.logger.error(f"Can not insert new record to non_existed collection: {collection_name}")
