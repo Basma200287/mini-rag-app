@@ -92,6 +92,8 @@ class QdrantDBProvider(VectorDBInterface):
                    metadata: list = None,
                    record_ids: list = None, batch_size: int = 50):
         
+        print("DEBUG insert vector size:", len(vectors[0]))#hethy zidetha
+
         if metadata is None:
             metadata = [None] * len(texts)
 
@@ -131,13 +133,22 @@ class QdrantDBProvider(VectorDBInterface):
         return True
 
     def search_by_vector(self, collection_name: str, vector: list, limit: int=5):
-        results= self.client.query_points(
-            collection_name=collection_name,
-            query=vector,
-            limit=limit,
+
+        try: #hethy zidtha na
+            results= self.client.query_points(
+                collection_name=collection_name,
+                query=vector,
+                limit=limit,
         )
+        except Exception as e:
+            print("❌ Qdrant ERROR:", e)
+            return None
+
+        print("DEBUG search vector size:", len(vector))#hethy zeyda
+        print("DEBUG collection:", collection_name)#hethy zeyda
         
         if not results or len(results)==0:
+            print("⚠️ No results found")#zidtha na
             return None 
         
         return [
@@ -147,6 +158,7 @@ class QdrantDBProvider(VectorDBInterface):
             })
             for result in results
         ]
+    
         
         
         

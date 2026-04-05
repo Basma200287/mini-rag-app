@@ -32,7 +32,10 @@ class NLPControler(BaseControler):
     
     def index_into_vector_db(self, project: Project, chunks: List[DataChunk],
                             chunks_ids:List[int],
-                            do_reset:bool = False):
+                            do_reset:bool = True ):#False
+        
+        # 🔥 STEP 0 : force delete collection# hetha zidetha 
+        self.vectordb_client.delete_collection(collection_name=collection_name)
          
         # step 1 : get collection name 
         collection_name = self.create_collection_name(project_id=project.project_id)
@@ -51,7 +54,7 @@ class NLPControler(BaseControler):
         _ = self.vectordb_client.create_collection(
             collection_name=collection_name,
             embedding_size= self.embedding_client.embedding_size,
-            do_reset=do_reset,
+            do_reset=True #do_reset,
         )
         #step 4 : insert into vector db
         _ = self.vectordb_client.insert_many(
@@ -75,7 +78,7 @@ class NLPControler(BaseControler):
         
         print("Vector size:", len(vector))
         
-        if not vector is None or len(vector)==0:
+        if vector is None or len(vector)==0: #kannit not kball vector
             return False
         
         #step3: do semantic search 
