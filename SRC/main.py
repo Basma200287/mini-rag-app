@@ -32,6 +32,11 @@ async def startup_span():
     
     app.vectordb_client.connect()
 
+    if app.generation_client is not None:
+        app.generation_client.set_generation_model(model_id=settings.GENERATION_MODEL_ID)
+    else:
+        print("⚠️ generation_client ما تتعملش: تحقق من COHERE_API_KEY")
+
 async def shutdown_span():
     app.mongo_conn.close()
     app.vectordb_client.disconnect()

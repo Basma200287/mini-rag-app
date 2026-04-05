@@ -3,6 +3,7 @@ from stores.llm.LLMEnums import DocumentTypeEnum
 from stores.llm.LLMEnums import CoHereEnums
 import logging 
 import cohere
+from sentence_transformers import SentenceTransformer
 
 
 class CoHereProvider(LLMInterface):
@@ -23,7 +24,7 @@ class CoHereProvider(LLMInterface):
         self.embedding_model_id = None
         self.embedding_size = None
 
-        self.client = cohere.Client(api_key=self.api_key)
+        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2') #self.client = cohere.Client(api_key=self.api_key)
 
         self.logger = logging.getLogger(__name__)
 
@@ -66,32 +67,34 @@ class CoHereProvider(LLMInterface):
         return response.text
     
     def embed_text(self, text: str, document_type: str= None):
-        if not self.client:
-            self.logger.error("CoHere client was not set")
+        if not self.embedding_model: #client
+            self.logger.error("Embedding model not initialized ") #CoHere client was not set
             return None
         
-        if not self.embedding_model_id:
+        #if not self.embedding_model_id:
             self.logger.error("Embedding model for CoHere was not set")
             return None
         
-        input_type = CoHereEnums.DOCUMENT
-        if document_type == DocumentTypeEnum.QUERY:
+        #input_type = CoHereEnums.DOCUMENT
+        #if document_type == DocumentTypeEnum.QUERY:
             input_type = CoHereEnums.QUERY
 
-        response = self.client.embed(
+        #response = self.client.embed(
             model = self.embedding_model_id,
             texts = [self.process_text(text)],
             input_type =input_type,
             embedding_types=['float'],
-        )
+        #)
+        processed_text = self.process_text(text)
+        embedding = self.embedding_model.encode(processed_text)
 
-        print("DEBUG embedding size:", len(response.embeddings.float[0]))
+        print("DEBUG embedding size:", len(embedding)) #print("DEBUG embedding size:", len(response.embeddings.float[0]))
 
-        if not response or not response.embeddings or not response.embeddings.float:
-            self.logger.error("Error while embedding text with CoHere")
-            return None
+        #if not response or not response.embeddings or not response.embeddings.float:
+            #self.logger.error("Error while embedding text with CoHere")
+            #return None
         
-        return response.embeddings.float[0]
+        return embedding #response.embeddings.float[0]
 
     def construct_prompt(self, prompt: str, role: str):
         return {

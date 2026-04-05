@@ -73,7 +73,9 @@ class NLPControler(BaseControler):
         vector = self.embedding_client.embed_text(text=text,
                                                  document_type=DocumentTypeEnum.QUERY.value)
         
-        if not vector or len(vector)==0:
+        print("Vector size:", len(vector))
+        
+        if not vector is None or len(vector)==0:
             return False
         
         #step3: do semantic search 

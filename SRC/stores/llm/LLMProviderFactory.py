@@ -17,6 +17,8 @@ class LLMProviderFactory:
             )
 
         if provider == LLMEnums.COHERE.value:
+            if not self.config.COHERE_API_KEY:
+                raise ValueError("COHERE_API_KEY مش موجود في settings. رجاءً عبيّو المفتاح.")
             return CoHereProvider(
                 api_key = self.config.COHERE_API_KEY,
                 default_input_max_characters = self.config.INPUT_DEFAULT_MAX_CHARACTERS,
