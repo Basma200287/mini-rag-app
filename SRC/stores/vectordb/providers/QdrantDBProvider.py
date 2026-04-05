@@ -3,6 +3,7 @@ from ..VectorDBInterface import VectorDBInterface
 from ..VectorDBEnums import DistanceMethodEnums
 import logging 
 from typing import List
+from fastapi.responses import JSONResponse
 from Models.db_schemes import RetrievedDocument
 
 class QdrantDBProvider(VectorDBInterface):
@@ -142,21 +143,27 @@ class QdrantDBProvider(VectorDBInterface):
         )
         except Exception as e:
             print("❌ Qdrant ERROR:", e)
-            return None
+            return [] #None
 
         print("DEBUG search vector size:", len(vector))#hethy zeyda
         print("DEBUG collection:", collection_name)#hethy zeyda
+
+        # Récupérer les points réels depuis QueryResponse
+        points = getattr(results, "result", None)## hethy zidtha
+        if points is None:## hethy zidtha
+            points = getattr(results, "points", None)
+
         
-        if not results or len(results)==0:
+        if not points or len(points) == 0:# not results or len(results)==0:
             print("⚠️ No results found")#zidtha na
-            return None 
+            return [] #JSONResponse(content={"results": []}) #None 
         
         return [
             RetrievedDocument(**{
-                "score":result.score,
-                "text":result.payload["text"],
+                "score":point.score,
+                "text":point.payload["text"], 
             })
-            for result in results
+            for point in points #for result in results
         ]
     
         

@@ -135,7 +135,8 @@ async def search_index(request: Request, project_id: str, search_request: Search
         return JSONResponse(
             status_code = status.HTTP_400_BAD_REQUEST,
             content = {
-                "signal" :ResponseSignal.VECTORDB_SEARCH_ERROR.value
+                "signal" :ResponseSignal.VECTORDB_SEARCH_ERROR.value,
+                "results": []
                 }
     )
     

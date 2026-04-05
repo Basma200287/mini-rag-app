@@ -24,7 +24,7 @@ class CoHereProvider(LLMInterface):
         self.embedding_model_id = None
         self.embedding_size = 384 #None
 
-        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2') #self.client = cohere.Client(api_key=self.api_key)
+        self.embedding_model = SentenceTransformer('all-mpnet-base-v2') #self.client = cohere.Client(api_key=self.api_key)
 
         self.logger = logging.getLogger(__name__)
 
