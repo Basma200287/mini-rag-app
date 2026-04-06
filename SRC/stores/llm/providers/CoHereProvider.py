@@ -26,7 +26,7 @@ class CoHereProvider(LLMInterface):
 
         self.embedding_model = SentenceTransformer('all-mpnet-base-v2') #self.client = cohere.Client(api_key=self.api_key)
         
-        self.enums = Coere.Client(api_key.api_key)##### cohere ma3adch mawjooda 
+        self.enums = cohere.Client(api_key)##### cohere ma3adch mawjooda 
 
         self.enums = CoHereEnums
         self.logger = logging.getLogger(__name__)

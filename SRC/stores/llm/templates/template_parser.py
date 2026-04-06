@@ -2,8 +2,8 @@ import os
 
 class TemplateParser:
 
-    def __init__(self, language: str=None , default_language='en'):
-        self.current_path = os.path.dirname(os.path.obspath(__file__))
+    def __init__(self, language: str=None , default_language='an'):
+        self.current_path = os.path.dirname(os.path.abspath(__file__))
         self.default_language = default_language
         self.language = None 
 
@@ -39,7 +39,7 @@ class TemplateParser:
         if not module :
             return None 
         
-        key_attribute = getattr(module, key d)
-        return key_attribute.substitue(vars)
+        key_attribute = getattr(module, key)
+        return key_attribute.substitute(vars)
     
     
