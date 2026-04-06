@@ -22,10 +22,13 @@ class CoHereProvider(LLMInterface):
         self.generation_model_id = None
 
         self.embedding_model_id = None
-        self.embedding_size = 384 #None
+        self.embedding_size = None
 
         self.embedding_model = SentenceTransformer('all-mpnet-base-v2') #self.client = cohere.Client(api_key=self.api_key)
+        
+        self.enums = Coere.Client(api_key.api_key)##### cohere ma3adch mawjooda 
 
+        self.enums = CoHereEnums
         self.logger = logging.getLogger(__name__)
 
     def set_generation_model(self, model_id: str):

@@ -142,7 +142,7 @@ class QdrantDBProvider(VectorDBInterface):
                 limit=limit,
         )
         except Exception as e:
-            print("❌ Qdrant ERROR:", e)
+            print("Qdrant ERROR:", e)
             return [] #None
 
         print("DEBUG search vector size:", len(vector))#hethy zeyda

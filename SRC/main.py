@@ -4,6 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from helpers.config import get_settings
 from  stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectordb.VectorDBProviderFactory import VectorDBProviderFactory
+from stores.llm.templates.template_parser import TemplateParser
 
 app = FastAPI()
 
@@ -36,6 +37,11 @@ async def startup_span():
         app.generation_client.set_generation_model(model_id=settings.GENERATION_MODEL_ID)
     else:
         print("⚠️ generation_client ما تتعملش: تحقق من COHERE_API_KEY")
+
+    app.template_parser = TemplateParser(
+        language=settings.PRIMARY_LANG, 
+        default_language=settings.DEFAULT_LANG, 
+    )
 
 async def shutdown_span():
     app.mongo_conn.close()
