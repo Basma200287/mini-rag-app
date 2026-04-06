@@ -110,11 +110,11 @@ class NLPControler(BaseControler):
         #step2: construct LLM prompt
         system_prompt =  self.template_parser.get("rag", "system_prompt")
 
-        documents_prompts = "\n".join( [
+        documents_prompts = "\n".join([
             self.template_parser.get("rag", "document_prompt", {
                     "doc_num": idx + 1,
-                    "chunk_text": doc.text,
-            })
+                    "chunk_text": doc.text or "",
+            }) or ""
 
             for idx, doc in enumerate(retrived_documents)
         ])

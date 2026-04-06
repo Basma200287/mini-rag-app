@@ -26,6 +26,7 @@ class TemplateParser:
         
         group_path= os.path.join(self.current_path, "locales", self.language, f"{group}.py")
         targeted_language = self.language
+        
         if not os.path.exists(group_path):
             group_path= os.path.join(self.current_path, "locales", self.language, f"{group}.py")
             targeted_language = self.language
@@ -34,7 +35,7 @@ class TemplateParser:
             return None
         
         # import group module
-        module = __import__(f"stores.llm.template.locales.{targeted_language}.{group}", fromlist=[group])
+        module = __import__(f"stores.llm.templates.locales.{targeted_language}.{group}", fromlist=[group])
 
         if not module :
             return None 

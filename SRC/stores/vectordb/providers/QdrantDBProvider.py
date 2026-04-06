@@ -3,7 +3,6 @@ from ..VectorDBInterface import VectorDBInterface
 from ..VectorDBEnums import DistanceMethodEnums
 import logging 
 from typing import List
-from fastapi.responses import JSONResponse
 from Models.db_schemes import RetrievedDocument
 
 class QdrantDBProvider(VectorDBInterface):

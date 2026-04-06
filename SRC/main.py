@@ -12,6 +12,8 @@ app = FastAPI()
 async def startup_span():
     settings = get_settings()
 
+    print("LANG:", settings.PRIMARY_LANG)# hethy zeyda
+
     app.mongo_conn = AsyncIOMotorClient(settings.MONGODB_URL)
     app.db_client = app.mongo_conn[settings.MONGODB_DATABASE]
 
