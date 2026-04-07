@@ -1,6 +1,8 @@
 from .BaseControler import BaseControler
 from Models.db_schemes import Project , DataChunk
 from stores.llm.LLMEnums import DocumentTypeEnum
+from sentence_transformers import SentenceTransformer
+from transformers import pipeline
 from typing import List
 import json 
 
@@ -44,11 +46,14 @@ class NLPControler(BaseControler):
         texts = [c.chunk_text for c in chunks ]
         metadata = [c.chunk_metadata for c in chunks]
 
-        vectors = [
-            self.embedding_client.embed_text(text=text, 
-                                              document_type=DocumentTypeEnum.DOCUMENT.value)
-            for text in texts
-        ]
+        embedding_model = SentenceTransformer('all-MiniLM-L6-v2') #hethy zeyda 
+        vectors = embedding_model.encode(texts).tolist() #hetha zeyda 
+
+        #vectors = [
+            #self.embedding_client.embed_text(text=text, 
+                                              #document_type=DocumentTypeEnum.DOCUMENT.value)
+            #for text in texts
+        #]
 
         #step 3 : create collection if not exists
         _ = self.vectordb_client.create_collection(
@@ -73,8 +78,10 @@ class NLPControler(BaseControler):
         collection_name = self.create_collection_name(project_id=project.project_id)
 
         #step2 :get text embedding vector
-        vector = self.embedding_client.embed_text(text=text,
-                                                 document_type=DocumentTypeEnum.QUERY.value)
+
+        vector = embedding_model.encode([text])[0].tolist() #hethy zidetha
+        #vector = self.embedding_client.embed_text(text=text,
+                                                 #document_type=DocumentTypeEnum.QUERY.value)
         
         print("Vector size:", len(vector))
         
@@ -121,19 +128,24 @@ class NLPControler(BaseControler):
 
         footer_prompt = self.template_parser.get("rag", "footer_prompt")
 
-        chat_history= [
-            self.generation_client.construct_prompt(
-                prompt=system_prompt,
-                role=self.generation_client.enums.SYSTEM.value,
-            )
-        ]
+        chat_history = system_prompt #hethy zidetha 
+        full_prompt = "\n\n".join([documents_prompts, footer_prompt]) #hethy zidetha 
+        #chat_history= [
+            #self.generation_client.construct_prompt(
+                #prompt=system_prompt,
+                #role=self.generation_client.enums.SYSTEM.value,
+            #)
+        #]
 
         full_prompt = "\n\n".join([documents_prompts, footer_prompt])
+        
+        generator = pipeline("text-generation", model="gpt2")# hethy zidetha
+        answer = generator(full_prompt, max_length=200)[0]['generated_text'] # hethy zidetha
 
-        answer = self.generation_client.generate_text(
-            prompt= full_prompt,
-            chat_history=chat_history,
-        )
+        #answer = self.generation_client.generate_text(
+            #prompt= full_prompt,
+            #chat_history=chat_history,
+        #)
 
         return answer, full_prompt,chat_history
         

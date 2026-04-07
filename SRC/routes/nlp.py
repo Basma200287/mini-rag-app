@@ -3,6 +3,8 @@ from fastapi.responses import JSONResponse
 from routes.schemes.nlp import PushRequest, SearchRequest
 from Models.ProjectModel import ProjectModel
 from Models.ChunkModel import ChunkModel
+from sentence_transformers import SentenceTransformer
+from transformers import pipeline
 from controlers import NLPControler
 from Models import ResponseSignal
 import logging 
