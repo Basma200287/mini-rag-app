@@ -11,13 +11,13 @@ class ChunkModel(BaseDataModel):
         self.collection = self.db_client[DataBaseEnum.COLLECTION_CHUNK_NAME.value]
 
     @classmethod
-    async def create_instance(cls,db_client: object):
+    async def create_instance(cls, db_client: object):
         instance = cls(db_client)
         await instance.init_collection()
         return instance
 
     async def init_collection(self):
-        all_collections= await self.db_client.list_collection_names()
+        all_collections = await self.db_client.list_collection_names()
         if DataBaseEnum.COLLECTION_CHUNK_NAME.value not in all_collections:
             self.collection = self.db_client[DataBaseEnum.COLLECTION_CHUNK_NAME.value]
             indexes = DataChunk.get_indexes()
@@ -25,7 +25,7 @@ class ChunkModel(BaseDataModel):
                 await self.collection.create_index(
                     index["key"],
                     name=index["name"],
-                    unique=index.get("unique", False) 
+                    unique=index["unique"]
                 )
 
     async def create_chunk(self, chunk: DataChunk):
@@ -33,46 +33,45 @@ class ChunkModel(BaseDataModel):
         chunk._id = result.inserted_id
         return chunk
 
-    async def get_chunk(self, chunk_id:str):
+    async def get_chunk(self, chunk_id: str):
         result = await self.collection.find_one({
             "_id": ObjectId(chunk_id)
         })
 
-        if result is None :
+        if result is None:
             return None
         
         return DataChunk(**result)
 
     async def insert_many_chunks(self, chunks: list, batch_size: int=100):
 
-        for i in range (0, len(chunks), batch_size):
+        for i in range(0, len(chunks), batch_size):
             batch = chunks[i:i+batch_size]
 
-            operations =[
+            operations = [
                 InsertOne(chunk.dict(by_alias=True, exclude_unset=True))
-                for chunk in batch 
+                for chunk in batch
             ]
 
             await self.collection.bulk_write(operations)
-            
+        
         return len(chunks)
 
-    async def delete_chunks_by_project_id(self, project_id:ObjectId):
+    async def delete_chunks_by_project_id(self, project_id: ObjectId):
         result = await self.collection.delete_many({
             "chunk_project_id": project_id
         })
 
         return result.deleted_count
     
-    async def get_project_chunks(self, project_id: ObjectId, page_no: int=1, page_size: int=100):
+    async def get_poject_chunks(self, project_id: ObjectId, page_no: int=1, page_size: int=50):
         records = await self.collection.find({
-            "chunk_project_id":project_id
-        }).skip(
-            (page_no-1)* page_size
-        ).limit(page_size).to_list(length=None)
+                    "chunk_project_id": project_id
+                }).skip(
+                    (page_no-1) * page_size
+                ).limit(page_size).to_list(length=None)
 
         return [
             DataChunk(**record)
             for record in records
         ]
-    

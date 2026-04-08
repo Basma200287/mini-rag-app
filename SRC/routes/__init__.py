@@ -1,3 +1,3 @@
-from controlers.DataControler import DataControler
-from controlers.ProjectControler import ProjectControler
+from controllers.DataController import DataController
+from controllers.ProjectController import ProjectController
 
