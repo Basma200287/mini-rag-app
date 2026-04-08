@@ -1,4 +1,4 @@
-from stores.llm.providers.LLMInterface import LLMInterface
+from stores.llm.LLMInterface import LLMInterface
 from stores.llm.LLMEnums import DocumentTypeEnum 
 from stores.llm.LLMEnums import CoHereEnums
 import logging 
