@@ -42,7 +42,7 @@ class QdrantDBProvider(VectorDBInterface):
         
     def create_collection(self, collection_name: str, 
                                 embedding_size: int,
-                                do_reset: bool = True):
+                                do_reset: bool = False):
         embedding_size = 384
         if do_reset:
             _ = self.delete_collection(collection_name=collection_name)
@@ -69,10 +69,10 @@ class QdrantDBProvider(VectorDBInterface):
             return False
         
         try:
-            _ = self.client.upload_records(
+            _ = self.client.upsert(
                 collection_name=collection_name,
-                records=[
-                    models.Record(
+                points=[
+                    models.PointStruct(
                         id=[record_id],
                         vector=vector,
                         payload={
@@ -105,8 +105,8 @@ class QdrantDBProvider(VectorDBInterface):
             batch_metadata = metadata[i:batch_end]
             batch_record_ids = record_ids[i:batch_end]
 
-            batch_records = [
-                models.Record(
+            points = [
+                models.PointStruct(
                     id=batch_record_ids[x],
                     vector=batch_vectors[x],
                     payload={
@@ -118,9 +118,9 @@ class QdrantDBProvider(VectorDBInterface):
             ]
 
             try:
-                _ = self.client.upload_records(
+                _ = self.client.upsert(
                     collection_name=collection_name,
-                    records=batch_records,
+                    points=points,
                 )
             except Exception as e:
                 self.logger.error(f"Error while inserting batch: {e}")
@@ -129,25 +129,29 @@ class QdrantDBProvider(VectorDBInterface):
         return True
         
     def search_by_vector(self, collection_name: str, vector: list, limit: int = 5):
-
+        print("Vector envoyé:", vector)
+        print("Dimension du vecteur:", len(vector))
+      
         results = self.client.query_points(
             collection_name=collection_name,
             query=vector,
             limit=limit
         )
-
-        if not results or len(results) == 0:
-            return None
         
-        if not results or len(results)==0:
-            print("⚠️ No results found")
-            return None
+        points = getattr(results, "result", None)## hethy zidtha
+        if points is None:## hethy zidtha
+            points = getattr(results, "points", None)
 
+        
+        if not points or len(points) == 0:# not results or len(results)==0:
+            print("⚠️ No results found")#zidtha na
+            return [] #JSONResponse(content={"results": []}) #None 
         
         return [
             RetrievedDocument(**{
-                "score": result.score,
-                "text": result.payload["text"],
+                "score":point.score,
+                "text":point.payload["text"], 
             })
-            for result in results
+            for point in points #for result in results
         ]
+    
