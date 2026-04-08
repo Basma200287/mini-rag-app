@@ -38,10 +38,12 @@ class QdrantDBProvider(VectorDBInterface):
     def delete_collection(self, collection_name: str):
         if self.is_collection_existed(collection_name):
             return self.client.delete_collection(collection_name=collection_name)
+            
         
     def create_collection(self, collection_name: str, 
                                 embedding_size: int,
-                                do_reset: bool = False):
+                                do_reset: bool = True):
+        embedding_size = 384
         if do_reset:
             _ = self.delete_collection(collection_name=collection_name)
         
@@ -128,14 +130,19 @@ class QdrantDBProvider(VectorDBInterface):
         
     def search_by_vector(self, collection_name: str, vector: list, limit: int = 5):
 
-        results = self.client.search(
+        results = self.client.query_points(
             collection_name=collection_name,
-            query_vector=vector,
+            query=vector,
             limit=limit
         )
 
         if not results or len(results) == 0:
             return None
+        
+        if not results or len(results)==0:
+            print("⚠️ No results found")
+            return None
+
         
         return [
             RetrievedDocument(**{
