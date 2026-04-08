@@ -43,7 +43,6 @@ class QdrantDBProvider(VectorDBInterface):
     def create_collection(self, collection_name: str, 
                                 embedding_size: int,
                                 do_reset: bool = False):
-        embedding_size = 384
         if do_reset:
             _ = self.delete_collection(collection_name=collection_name)
         
@@ -73,7 +72,7 @@ class QdrantDBProvider(VectorDBInterface):
                 collection_name=collection_name,
                 points=[
                     models.PointStruct(
-                        id=[record_id],
+                        id=record_id,
                         vector=vector,
                         payload={
                             "text": text, "metadata": metadata
@@ -132,11 +131,15 @@ class QdrantDBProvider(VectorDBInterface):
         print("Vector envoyé:", vector)
         print("Dimension du vecteur:", len(vector))
       
-        results = self.client.query_points(
-            collection_name=collection_name,
-            query=vector,
-            limit=limit
+        try:
+            results = self.client.query_points(
+                collection_name=collection_name,
+                query=vector,
+                limit=limit
         )
+        except Exception as e:
+            print("Qdrant ERROR:", e)
+            return None
         
         points = getattr(results, "result", None)## hethy zidtha
         if points is None:## hethy zidtha
