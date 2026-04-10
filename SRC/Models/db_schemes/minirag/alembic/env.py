@@ -1,4 +1,7 @@
 from logging.config import fileConfig
+import sys
+import os
+sys.path.append("/mnt/c/Users/DELL/mini-rag-app/SRC/Models/db_schemes/minirag")
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -8,6 +11,7 @@ from schemes.project import Project
 from schemes.datachunk import DataChunk
 
 from alembic import context
+print("ASSET LOADED")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
