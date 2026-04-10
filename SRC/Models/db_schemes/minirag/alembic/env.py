@@ -3,7 +3,9 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from schemes.minirag_base import SQLAlchemyBase
-
+from schemes.asset import Asset
+from schemes.project import Project
+from schemes.datachunk import DataChunk
 
 from alembic import context
 
