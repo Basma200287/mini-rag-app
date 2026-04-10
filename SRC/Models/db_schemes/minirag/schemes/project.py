@@ -1,4 +1,4 @@
-from SRC.Models.db_schemes.minirag.schemes.minirag_base import SQLAlchemyBase
+from schemes.minirag_base import SQLAlchemyBase
 from sqlalchemy import Column, Integer, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
