@@ -1,14 +1,12 @@
 from logging.config import fileConfig
 import sys
 import os
-sys.path.append("/mnt/c/Users/DELL/mini-rag-app/SRC/Models/db_schemes/minirag")
-
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from schemes.minirag_base import SQLAlchemyBase
-from schemes.asset import Asset
-from schemes.project import Project
-from schemes.datachunk import DataChunk
+from Models.db_schemes.minirag.schemes.minirag_base import SQLAlchemyBase
+from Models.db_schemes.minirag.schemes.asset import Asset
+from Models.db_schemes.minirag.schemes.project import Project
+from Models.db_schemes.minirag.schemes.datachunk import DataChunk
 
 from alembic import context
 print("ASSET LOADED")

@@ -20,6 +20,7 @@ COPY SRC/requirements.txt .
 RUN uv pip install -r requirements.txt --system
 
 COPY SRC/ . 
+ENV PYTHONPATH=/app
 
 # Create directory structure for Alembic
 RUN mkdir -p /app/Models/db_schemes/minirag/
@@ -33,3 +34,4 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # Command to run the application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+
