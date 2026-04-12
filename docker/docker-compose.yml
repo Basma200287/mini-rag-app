@@ -38,7 +38,7 @@ services:
     image: pgvector/pgvector:0.8.2-pg18-trixie
     container_name: pgvector
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - 'pgvector:/var/lib/postgresql'
     env_file:
