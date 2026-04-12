@@ -1,5 +1,5 @@
 from .BaseDataModel import BaseDataModel
-from .db_schemes import Project
+from Models.db_schemes.minirag.schemes.project import Project
 from .enums.DataBaseEnum import DataBaseEnum
 from sqlalchemy.future import select
 from sqlalchemy import func

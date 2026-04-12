@@ -1,5 +1,5 @@
 from .BaseDataModel import BaseDataModel
-from .db_schemes import Asset
+from Models.db_schemes.minirag.schemes.asset import Asset
 from .enums.DataBaseEnum import DataBaseEnum
 from bson import ObjectId
 from sqlalchemy.future import select
