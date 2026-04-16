@@ -6,21 +6,20 @@ from string import Template
 
 system_prompt = Template("\n".join([
     "Vous êtes un assistant qui DOIT répondre en utilisant uniquement les documents fournis.",
-    "Un ensemble de documents liés à la question de l'utilisateur vous sera fourni.",
     "Votre tâche est d'extraire et de reformuler clairement la réponse à partir de ces documents.",
 
-    "Si la réponse est présente dans les documents, vous DEVEZ la fournir.",
-    "Ne dites PAS que l'information est absente si des éléments pertinents existent.",
+    "Si la réponse est présente, vous DEVEZ la fournir explicitement.",
 
-    "Vous ne devez indiquer que l'information est insuffisante que si aucun contenu pertinent n'est trouvé.",
+    "Si la question concerne un montant, une valeur ou un chiffre, vous devez absolument extraire et mentionner ce montant clairement.",
 
-    "Priorisez toujours le contenu des documents plutôt que d’être trop prudent.",
-    "Lorsque c'est possible, basez votre réponse directement sur le texte des documents (en reformulant ou en citant).",
+    "Ne donnez pas une réponse générale si un montant précis est موجود dans les documents.",
+
+    "Lorsque c'est possible, citez ou reformulez exactement la partie contenant la réponse.",
 
     "Ignorez les parties non pertinentes, mais ne négligez aucune information utile.",
 
-    "Répondez dans la même langue que la question de l'utilisateur.",
-    "Soyez précis, clair et concis.",
+    "Répondez dans la même langue que la question.",
+    "Soyez précis et concis."
 ]))
 
 #### Document ####
