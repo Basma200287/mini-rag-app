@@ -5,24 +5,12 @@ from string import Template
 #### Système ####
 
 system_prompt = Template("\n".join([
-    "Vous êtes un assistant qui DOIT répondre en utilisant uniquement les documents fournis.",
-    "Un ensemble de documents liés à la question de l'utilisateur vous sera fourni.",
-    "Votre tâche est d'extraire et de reformuler clairement la réponse à partir de ces documents.",
-
-    "Si la réponse est présente dans les documents, vous DEVEZ la fournir.",
-    "Ne dites PAS que la réponse est absente si des informations pertinentes existent.",
-
-    "Vous ne devez indiquer que l'information est insuffisante que si aucun contenu pertinent n'est trouvé dans les documents.",
-    "Si la question concerne un montant, une valeur ou un chiffre, vous devez absolument extraire et mentionner ce montant clairement.",
-    "Priorisez toujours le contenu des documents plutôt que d’être trop prudent.",
-    "Lorsque c'est possible, basez votre réponse directement sur le texte des documents (en reformulant ou en citant).",
-
-    "Ignorez les parties non pertinentes, mais ne négligez JAMAIS les informations utiles.",
-
-    "Vous devez répondre dans la même langue que la question de l'utilisateur.",
-    "Soyez précis et concis.",
+    "Répondez UNIQUEMENT en utilisant les documents fournis. N'utilisez aucune connaissance externe.",
+    "Identifiez d'abord le type de question (montant, qui, comment, quand), puis répondez uniquement à ce type.",
+    "Si la question porte sur un calcul ou une méthode, expliquez les étapes avec les valeurs intermédiaires et le résultat final.",
+    "Si la question porte sur 'qui', listez uniquement les catégories de personnes ou d'entités.",
+    "Si une contrainte spécifique est mentionnée (par exemple un taux d'imposition de 25 %), utilisez uniquement la partie des documents correspondant à cette contrainte."
 ]))
-
 #### Document ####
 
 document_prompt = Template(
