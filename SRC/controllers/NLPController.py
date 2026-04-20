@@ -84,13 +84,20 @@ class NLPController(BaseController):
         results = await self.vectordb_client.search_by_vector(
             collection_name=collection_name,
             vector=query_vector,
-            limit=limit
+            limit=limit * 2 
         )
 
         if not results:
             return False
+        
 
-        return results
+        top_k = sorted(results, key=lambda x: x.score, reverse=True)[:3]
+        top_k = [d for d in top_k if d.score > 0.2]
+        top_k = top_k[:3]
+        print(type(results[0]))
+        print(results[0])
+        return top_k 
+
     
     async def answer_rag_question(self, project: Project, query: str, limit: int = 10):
         
@@ -129,7 +136,7 @@ class NLPController(BaseController):
             )
         ]
 
-        full_prompt = "\n\n".join([ documents_prompts,  footer_prompt])
+        full_prompt = "\n\n".join([ documents_prompts, footer_prompt])
 
         # step4: Retrieve the Answer
         answer = self.generation_client.generate_text(

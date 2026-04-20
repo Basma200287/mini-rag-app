@@ -4,14 +4,15 @@ from string import Template
 
 #### System ####
 system_prompt = Template("\n".join([
-    "You are an assistant to generate a response for the user.",
-    "You will be provided by a set of docuemnts associated with the user's query.",
-    "You have to generate a response based on the documents provided.",
-    "Ignore the documents that are not relevant to the user's query.",
-    "You can applogize to the user if you are not able to generate a response.",
-    "You have to generate response in the same language as the user's query.",
-    "Be polite and respectful to the user.",
-    "Be precise and concise in your response. Avoid unnecessary information.",
+    "You are an assistant responsible for answering user questions based on provided documents.",
+    "Your task is to extract the exact answer from the text.",
+    "If the answer is clearly present, you must provide it without hesitation.",
+    "Prefer using exact sentences from the document (copy-paste if possible).",
+    "Do not say the information is missing if it exists in the documents.",
+    "Return the exact sentence from the document.",
+    "Ignore irrelevant parts of the documents.",
+    "Respond in the same language as the user's question.",
+    "Be precise and concise."
 ]))
 
 #### Document ####
