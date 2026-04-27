@@ -15,6 +15,14 @@ class NLPController(BaseController):
         self.embedding_client = embedding_client
         self.template_parser = template_parser
 
+        self.STOPWORDS = {
+            "le","la","les","de","du","des","un","une","et","est","en",
+            "que","qui","à","au","aux","ce","se","sa","son","sur","par",
+            "pas","ne","il","elle","ils","elles","nous","vous","je","tu",
+            "the","a","an","is","in","of","for","to","on","at","with",
+            "this","that","are","was","were","be","been","have","has","had"
+        }
+
     def create_collection_name(self, project_id: str):
         return f"collection_{self.vectordb_client.default_vector_size}_{project_id}".strip()
     
@@ -60,6 +68,18 @@ class NLPController(BaseController):
         )
 
         return True
+    
+    def hybrid_score(self, doc, query: str) -> float:
+        words = set(query.lower().split()) - self.STOPWORDS
+        if not words:
+            return doc.score
+
+        text         = doc.text.lower()
+        hits         = sum(1 for w in words if w in text)
+        keyword_score = hits / len(words)  
+
+        # 65% sémantique Cohere + 35% keywords
+        return 0.65 * doc.score + 0.35 * keyword_score
 
     async def search_vector_db_collection(self, project: Project, text: str, limit: int = 10):
 
@@ -90,12 +110,18 @@ class NLPController(BaseController):
         if not results:
             return False
         
+        top_k = sorted(
+            results,
+            key=lambda x: self.hybrid_score(x, text),
+            reverse=True
+        )
+              
+        top_k = [d for d in top_k if d.score > 0.3]
+        top_k = top_k[:5]
 
-        top_k = sorted(results, key=lambda x: x.score, reverse=True)[:3]
-        top_k = [d for d in top_k if d.score > 0.2]
-        top_k = top_k[:3]
-        print(type(results[0]))
-        print(results[0])
+        if not top_k:
+            return False
+
         return top_k 
 
     
@@ -116,7 +142,7 @@ class NLPController(BaseController):
         # step2: Construct LLM prompt
         system_prompt = self.template_parser.get("rag", "system_prompt")
 
-        documents_prompts = "\n".join([
+        documents_prompts = "\n\n".join([
             self.template_parser.get("rag", "document_prompt", {
                     "doc_num": idx + 1,
                     "chunk_text": self.generation_client.process_text(doc.text),
@@ -129,14 +155,25 @@ class NLPController(BaseController):
         })
 
         # step3: Construct Generation Client Prompts
+
+        full_prompt = "\n\n".join([
+            system_prompt,
+            "═══════════ DOCUMENTS FOURNIS ═══════════",
+            documents_prompts,
+            "═════════════════════════════════════════",
+            footer_prompt
+        ])
+
         chat_history = [
             self.generation_client.construct_prompt(
                 prompt=system_prompt,
                 role=self.generation_client.enums.SYSTEM.value,
-            )
+            ),
+            self.generation_client.construct_prompt(
+                prompt=full_prompt,
+                role=self.generation_client.enums.USER.value,
+            ),
         ]
-
-        full_prompt = "\n\n".join([ documents_prompts, footer_prompt])
 
         # step4: Retrieve the Answer
         answer = self.generation_client.generate_text(

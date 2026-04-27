@@ -50,15 +50,15 @@ class CoHereProvider(LLMInterface):
             self.logger.error("Generation model for CoHere was not set")
             return None
         
-        max_output_tokens = max_output_tokens if max_output_tokens else self.default_generation_max_output_tokens
-        temperature = temperature if temperature else self.default_generation_temperature
+        max_output_tokens = max_output_tokens or self.default_generation_max_output_tokens
+        temperature = temperature or self.default_generation_temperature
 
         response = self.client.chat(
             model = self.generation_model_id,
             chat_history = chat_history,
-            message = self.process_text(prompt),
+            message = prompt,
             temperature = temperature,
-            max_tokens = max_output_tokens
+            max_tokens = max_output_tokens,
         )
 
         if not response or not response.text:
@@ -80,7 +80,7 @@ class CoHereProvider(LLMInterface):
             return None
         
         input_type = CoHereEnums.DOCUMENT
-        if document_type == DocumentTypeEnum.QUERY:
+        if document_type == DocumentTypeEnum.QUERY.value:
             input_type = CoHereEnums.QUERY
 
         response = self.client.embed(
@@ -99,7 +99,7 @@ class CoHereProvider(LLMInterface):
     def construct_prompt(self, prompt: str, role: str):
         return {
             "role": role,
-            "text": prompt,
+            "message": prompt,
         }
 
         
