@@ -4,7 +4,10 @@ import api, { PROJECT_ID } from "./client";
    👤 USER - QUESTION ANSWER
 ───────────────────────────── */
 export const askQuestion = (question) =>
-  api.post(`/nlp/index/answer/${PROJECT_ID}`, { question });
+  api.post(`/nlp/index/answer/${PROJECT_ID}`, { 
+    text: question,   // ✅ était "question", le backend attend "text"
+    limit: 10         // ✅ requis par SearchRequest
+  });
 
 
 /* ─────────────────────────────
@@ -41,4 +44,7 @@ export const getIndexInfo = () =>
    🔍 SEARCH INDEX
 ───────────────────────────── */
 export const searchIndex = (query) =>
-  api.post(`/nlp/index/search/${PROJECT_ID}`, { query });
+  api.post(`/nlp/index/search/${PROJECT_ID}`, { 
+    text: query,      // ✅ était "query", le backend attend "text"
+    limit: 10
+  });
