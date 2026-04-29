@@ -7,5 +7,6 @@ const api = axios.create({
   baseURL: `${BASE_URL}/api/v1`,
   headers: { "Content-Type": "application/json" },
 });
-
+console.log('BASE_URL:', BASE_URL);
+console.log('PROJECT_ID:', PROJECT_ID);
 export default api;

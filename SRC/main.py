@@ -15,11 +15,14 @@ from utils.metrics import setup_metrics
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # URL du frontend
+    allow_origins=["*"],  # URL du frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.options("/{full_path:path}")
+async def preflight_handler():
+    return {}
 
 # Setup Prometheus metrics
 setup_metrics(app)
