@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { askQuestion } from '../api/rag';
+import { askQuestion } from "./api/rag";
 
 export default function UserChat() {
   const [messages, setMessages] = useState([

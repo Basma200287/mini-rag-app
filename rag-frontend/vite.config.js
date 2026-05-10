@@ -6,11 +6,3 @@ export default defineConfig({
   plugins: [react()],
 })
 
-theme: {
-  extend: {
-    fontFamily: {
-      sans: ['DM Sans', 'sans-serif'],
-      mono: ['DM Mono', 'monospace'],
-    }
-  }
-}
